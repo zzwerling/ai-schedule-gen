@@ -1,0 +1,36 @@
+# 🔐 Secrets
+.env
+
+# 🧠 Python garbage
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 📦 Virtual environments
+venv/
+.env/           # sometimes pipenv uses this
+.venv/
+
+# 🗑 IDE/editor trash
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# 🐳 Optional Docker crap
+*.log
+*.db
+docker-compose.override.yml
+
+# 🧪 Test artifacts
+coverage/
+*.cover
+*.log
+*.out
+htmlcov/
+
+# 📄 Misc
+*.bak
+*.tmp
