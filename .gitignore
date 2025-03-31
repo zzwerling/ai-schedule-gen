@@ -1,6 +1,9 @@
 # 🔐 Secrets
 .env
 
+# Node stuff
+frontend/node_modules
+
 # 🧠 Python garbage
 __pycache__/
 *.pyc
