@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+
 const timeOptions = Array.from({ length: 48 }, (_, i) => {
     const hour24 = Math.floor(i / 2);
     const minutes = i % 2 === 0 ? '00' : '30';
@@ -11,6 +12,9 @@ const timeOptions = Array.from({ length: 48 }, (_, i) => {
 });
 
 export default function SchedulerForm() {
+
+
+
     const [sleepTime, setSleepTime] = useState('');
     const [wakeTime, setWakeTime] = useState('');
     const [fixedTasks, setFixedTasks] = useState([]);
@@ -19,6 +23,7 @@ export default function SchedulerForm() {
     ]);
 
     const [schedule, setSchedule] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     // --- Fixed Task Functions ---
     const addFixedTask = () => {
@@ -42,9 +47,23 @@ export default function SchedulerForm() {
         setUnfixedTasks(updated);
     };
 
+    const removeFixedTask = (index) => {
+        const updated = [...fixedTasks];
+        updated.splice(index, 1);
+        setFixedTasks(updated);
+    };
+
+    const removeUnfixedTask = (index) => {
+        const updated = [...unfixedTasks];
+        updated.splice(index, 1);
+        setUnfixedTasks(updated);
+    };
+
     // --- Submission ---
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
+
         const data = {
             sleepTime,
             wakeTime,
@@ -73,7 +92,12 @@ export default function SchedulerForm() {
         } catch (err) {
             console.error('Error calling API:', err);
             alert('An error occurred. Please try again later.')
+        } finally {
+            setLoading(false);
         }
+
+
+
 
     };
 
@@ -126,7 +150,7 @@ export default function SchedulerForm() {
                         </button>
                     </div>
                     {fixedTasks.map((task, i) => (
-                        <div key={i} className="flex gap-2 mb-2">
+                        <div key={i} className="flex gap-2 mb-2 items-center">
                             <input
                                 type="text"
                                 placeholder="Task name"
@@ -144,6 +168,13 @@ export default function SchedulerForm() {
                                     <option key={t} value={t}>{t}</option>
                                 ))}
                             </select>
+                            <button
+                                type="button"
+                                onClick={() => removeFixedTask(i)}
+                                className="text-red-600 hover:underline text-sm px-2"
+                            >
+                                X
+                            </button>
                         </div>
                     ))}
                 </div>
@@ -161,7 +192,7 @@ export default function SchedulerForm() {
                         </button>
                     </div>
                     {unfixedTasks.map((task, i) => (
-                        <div key={i} className="flex gap-2 mb-2">
+                        <div key={i} className="flex gap-2 mb-2 items-center">
                             <input
                                 type="text"
                                 placeholder="Task name"
@@ -178,25 +209,42 @@ export default function SchedulerForm() {
                                 className="w-36 border p-2 rounded"
                                 required
                             />
+                            {unfixedTasks.length > 1 && (
+                                <button
+                                    type="button"
+                                    onClick={() => removeUnfixedTask(i)}
+                                    className="text-red-600 hover:underline text-sm px-2"
+                                >
+                                    X
+                                </button>
+                            )}
                         </div>
                     ))}
+
                 </div>
 
                 {/* Submit */}
                 <button
                     type="submit"
-                    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                    className={`px-4 py-2 rounded text-white font-semibold transition ${loading
+                        ? "bg-green-400 cursor-not-allowed"
+                        : "bg-green-600 hover:bg-green-700"
+                        }`}
+                    disabled={loading}
                 >
-                    Generate Schedule
+                    {loading ? "Generating..." : "Generate Schedule"}
                 </button>
             </form>
 
 
             {schedule && (
-                <div
-                    className="mt-8 p-4 bg-white border rounded shadow"
-                    dangerouslySetInnerHTML={{ __html: schedule}}
-                />
+                        <div
+                            className="mt-8 p-4 bg-white border rounded shadow"
+                            dangerouslySetInnerHTML={{ __html: schedule }}
+                        />
+                 
+                   
+
             )}
 
 
